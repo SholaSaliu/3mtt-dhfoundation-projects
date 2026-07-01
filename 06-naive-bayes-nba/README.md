@@ -1,157 +1,63 @@
-# Project 6: Naive Bayes NBA Classification
+# NBA Player Longevity Prediction Project Overview
 
-## 📌 Overview
+## 1. Project Overview
+This project aims to build a predictive model to identify NBA players likely to have a career spanning 5 years or more, based on their initial season statistics. We utilized a Gaussian Naive Bayes classifier for this task. The goal is to provide insights for scouting decisions by predicting player longevity and understanding the contributing factors.
 
-This project implements Naive Bayes classification to predict NBA player longevity. Building on the feature engineering work from Project 5, this project focuses on training and evaluating a Naive Bayes classifier to determine whether a player will last at least 5 years in the league.
+## 2. Data
+The dataset comprises initial season statistics for NBA players. The target variable, `'target_5yrs'`, indicates whether a player had a long career (1 for 5+ years, 0 for less than 5 years).
 
----
+## 3. Methodology
+1.  **Data Loading**: The `extracted_nba_players_data.csv` dataset was loaded.
+2.  **Preprocessing**: 
+    *   Features (X) and target (y) were separated.
+    *   Missing values were checked (none found).
+    *   Feature correlation analysis identified highly correlated pairs (e.g., 'ast' - 'stl', 'ast' - 'tov', 'stl' - 'tov', 'tov' - 'total_points').
+3.  **Train-Test Split**: The data was split into training and testing sets (80% train, 20% test) using `stratify=y` to maintain the target variable's distribution.
+4.  **Model Training**: A Gaussian Naive Bayes classifier was initialized and trained on the training data.
+5.  **Prediction**: Predictions (`y_pred`) and probabilities (`y_pred_proba`) were made on the test set.
 
-## 🎯 Learning Objectives
+## 4. Model Performance Evaluation
+The Gaussian Naive Bayes model demonstrated the following performance on the test set:
 
-- Understand Naive Bayes algorithm and its assumptions
-- Implement Naive Bayes classifier using scikit-learn
-- Compare Naive Bayes with other classification algorithms
-- Evaluate classification performance using multiple metrics
-- Interpret model predictions and feature importance
-- Handle probabilistic predictions
+*   **Accuracy**: 0.638
+*   **Precision**: 0.800 (Minimizes false positives - 'busts')
+*   **Recall**: 0.554 (Minimizes false negatives - 'missed talent')
 
----
-
-## 📊 Dataset
-
-- **Source:** nba-players.csv (cleaned and engineered from Project 5)
-- **Size:** NBA player statistics with engineered features
-- **Features:** Performance metrics including Points Per Minute (ppm) and other selected features
-- **Target Variable:** target_5yrs (binary: 1 = lasts 5+ years, 0 = does not)
-- **Task Type:** Binary classification
-
----
-
-## 🔧 Technologies & Libraries
-
-- Python 3.x
-- Pandas - Data manipulation
-- NumPy - Numerical computing
-- scikit-learn - Naive Bayes and model evaluation
-- Matplotlib/Seaborn - Visualization
-- Jupyter Notebook - Analysis environment
-
----
-
-## 📂 Project Structure
-
+**Confusion Matrix:**
 ```
-06-naive-bayes-nba/
-├── README.md (this file)
-├── notebooks/
-│   └── naive_bayes_classification.ipynb
-├── data/
-│   ├── raw/
-│   │   └── nba-players.csv
-│   └── processed/
-│       └── engineered_features.csv
-├── outputs/
-│   ├── naive_bayes_report.pdf
-│   └── visualizations/
-│       ├── confusion_matrix.png
-│       ├── roc_curve.png
-│       └── feature_importance.png
-└── requirements.txt
+[[79 23]
+ [74 92]]
 ```
+*   **True Negatives (TN)**: 79 - Correctly identified short careers.
+*   **False Positives (FP)**: 23 - Predicted long career, but actually short ('busts'). Costs resources.
+*   **False Negatives (FN)**: 74 - Predicted short career, but actually long ('missed talent'). Lost opportunity.
+*   **True Positives (TP)**: 92 - Correctly identified long careers.
 
----
+## 5. Feature Importance
+Based on the absolute difference in class means (mean for short career vs. mean for long career), the most influential features are:
 
-## 🚀 How to Run
+*   total_points: 277.846
+*   fg: 2.774
+*   ft: 2.242
+*   reb: 1.322
+*   ast: 0.564
+*   tov: 0.432
+*   3p: 0.392
+*   stl: 0.208
+*   blk: 0.192
+*   efficiency: 0.038
 
-1. **Navigate to project folder:**
-   ```bash
-   cd 06-naive-bayes-nba
-   ```
+## 6. Model Reliability and Limitations
 
-2. **Install dependencies:**
-   ```bash
-   pip install -r requirements.txt
-   ```
+**STRENGTHS:**
+*   **Precision of 0.800** means 80.0% of predicted long careers are correct.
+*   **Recall of 0.554** means the model correctly identifies 55.4% of all players who actually go on to have long careers.
+*   **Simplicity and Speed**: Gaussian Naive Bayes is computationally efficient and simple to implement, making it a good baseline model.
 
-3. **Open Jupyter Notebook:**
-   ```bash
-   jupyter notebook notebooks/naive_bayes_classification.ipynb
-   ```
+**LIMITATIONS:**
+*   **Independence Assumption**: The core assumption of feature independence is often violated in basketball statistics, where features are inherently correlated (e.g., points and minutes). This can lead to suboptimal performance compared to models that can handle correlations better.
+*   **Bias-Variance Trade-off**: Naive Bayes is a high-bias, low-variance model, potentially oversimplifying complex relationships.
+*   **Sensitivity to Data Distribution**: The 'Gaussian' assumption requires features to be normally distributed; deviations can affect performance.
 
----
-
-## 📈 Key Concepts
-
-### Naive Bayes Algorithm
-- Probabilistic classifier based on Bayes' theorem
-- Assumes conditional independence of features
-- Fast and efficient for classification tasks
-- Works well with both continuous and categorical data
-
-### Classification Approach
-1. Data preparation and feature scaling
-2. Train-test split
-3. Model training (Gaussian Naive Bayes)
-4. Model evaluation using multiple metrics
-5. Hyperparameter tuning if applicable
-6. Comparison with baseline models
-
----
-
-## 📊 Model Performance
-
-### Expected Metrics
-- Accuracy: [To be calculated]
-- Precision: [To be calculated]
-- Recall: [To be calculated]
-- F1-Score: [To be calculated]
-- ROC-AUC: [To be calculated]
-
-### Comparison Metrics
-- Compare with other algorithms (Logistic Regression, Decision Trees, Random Forests)
-- Analyze trade-offs between precision and recall
-- Evaluate on test set performance
-
----
-
-## 💡 Key Learnings
-
-- Naive Bayes is effective for quick, interpretable classifications
-- Understanding conditional independence assumptions
-- Importance of feature scaling for certain algorithms
-- Evaluating probabilistic predictions
-- When to use Naive Bayes vs. other classifiers
-
----
-
-## 🔮 Future Improvements
-
-1. Implement other Naive Bayes variants (Multinomial, Bernoulli)
-2. Feature selection and optimization
-3. Ensemble methods combining Naive Bayes with other algorithms
-4. Cross-validation for more robust evaluation
-5. Class imbalance handling techniques
-
----
-
-## 📚 Resources & References
-
-- scikit-learn Naive Bayes: https://scikit-learn.org/stable/modules/naive_bayes.html
-- Bayes' Theorem and Probability
-- Classification metrics and evaluation
-- Feature engineering best practices
-
----
-
-## 📝 Author
-
-**Name:** Shola Saliu  
-**Program:** 3MTT DHFoundation  
-**Date Started:** July 2026
-
----
-
-**Files:**
-- 📓 Jupyter Notebook: `notebooks/naive_bayes_classification.ipynb`
-- 📄 PDF Report: `outputs/naive_bayes_report.pdf`
-- 📊 Data: `data/`
+**CONCLUSION:**
+The Gaussian Naive Bayes model provides a quick and interpretable baseline for predicting NBA player longevity. While offering valuable insights into key predictive features and acceptable precision/recall, its underlying assumptions suggest that more sophisticated models might be necessary for higher predictive accuracy, especially with highly correlated features. Future improvements could involve feature engineering, advanced classification algorithms (e.g., Logistic Regression, Random Forest, and robust cross-validation techniques.
